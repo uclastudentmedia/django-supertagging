@@ -24,20 +24,13 @@ class SuperTagManager(models.Manager):
             supertaggeditem__object_id=obj.pk
         ))
         
-        print "tag_names: %s" % tag_names
-        print "current_tags: %s" % current_tags
-        
         updated_tag_names = parse_tag_input(tag_names)
-        print "updated_tag_names: %s" % updated_tag_names
         # Always lower case tags
         updated_tag_names = [t.lower() for t in updated_tag_names]
-        print "updated_tag_names: %s" % updated_tag_names
-        
         
         # Process the tags with Calais
         from supertagging.modules import process
         processed_tags = process(obj, updated_tag_names)
-        print "processed_tags: %s" % processed_tags
         
         for t in updated_tag_names:
             if t not in [p.name for p in processed_tags]:
