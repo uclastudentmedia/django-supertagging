@@ -55,12 +55,16 @@ class SuperTagManager(models.Manager):
             order_by = kwargs['order_by']
         else:
             order_by = '-relevance'
-        # Query to return the relevance along with the tags.
-        rel_q = '''SELECT MAX(relevance) FROM supertagging_supertaggeditem 
-                    WHERE supertagging_supertaggeditem.tag_id=supertagging_supertag.id AND 
-                        supertagging_supertaggeditem.object_id = %s AND 
-                        supertagging_supertaggeditem.content_type_id = %s
-                ''' % (obj.pk, ctype.pk)
+        
+        if obj.pk and ctype.pk:
+            # Query to return the relevance along with the tags.
+            rel_q = '''SELECT MAX(relevance) FROM supertagging_supertaggeditem 
+                        WHERE supertagging_supertaggeditem.tag_id=supertagging_supertag.id AND 
+                            supertagging_supertaggeditem.object_id = %s AND 
+                            supertagging_supertaggeditem.content_type_id = %s
+                    ''' % (obj.pk, ctype.pk)
+        else:
+            return self.none()
         
         return self.filter(supertaggeditem__content_type__pk=ctype.pk,
                                 supertaggeditem__object_id=obj.pk,
